@@ -1,0 +1,79 @@
+.profile-page__header {
+  padding: 24px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.to-setting-btn {
+  width: 190px;
+  text-decoration: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+}
+
+.to-setting-icon {
+  width: 16px;
+  height: 16px;
+  color: var(--dark-color);
+}
+
+.profile-page__body {
+  padding: 24px;
+  display: grid;
+  grid-gap: 64px;
+  grid-template-columns: 1fr 340px;
+}
+
+.subscribers-wrapper {
+  display: flex;
+  gap: 6px;
+  align-items: center;
+}
+
+.subscriber-avatar-btn {
+  width: 36px; // А надо ли? есть же ниже
+  height: 36px; // А надо ли? есть же ниже
+
+  img {
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+  }
+}
+
+.to-subscribers-search {
+  position: relative;
+  background: var(--light-color);
+  border-radius: 50%;
+  width: 14px;
+  height: 14px;
+  margin-left: 8px;
+
+  &:before,
+  &:after {
+    position: absolute;
+    content: '';
+    width: 1px;
+    height: 8px;
+    background: var(--dark-color);
+    top: 50%;
+    left: 50%;
+  }
+
+  &:before {
+    transform: translateY(-50%) translateX(-50%);
+  }
+
+  &:after {
+    transform: translateY(-50%) translateX(-50%) rotate(90deg);
+  }
+}
+
+.stack-wrapper {
+  display: flex;
+  gap: 4px;
+  flex-wrap: wrap;
+}

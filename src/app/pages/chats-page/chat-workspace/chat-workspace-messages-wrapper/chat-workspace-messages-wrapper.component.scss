@@ -1,0 +1,31 @@
+:host {
+  display: grid;
+  padding: 16px 20px;
+  grid-template-rows: 1fr min-content;
+  height: 650px;
+}
+
+.messages-wrapper {
+  display: grid;
+  gap: 12px;
+  overflow-y: scroll;
+
+  &::-webkit-scrollbar {
+    display: none;
+  }
+}
+
+.date-splitter {
+  display: flex;
+  justify-content: center;
+  margin: 32px 0;
+}
+
+.date-icon {
+  padding: 6px 31px;
+  background: var(--dark-hover-color);
+  font-weight: 700;
+  font-size: 12px;
+  line-height: 16px;
+  border-radius: 1px;
+}

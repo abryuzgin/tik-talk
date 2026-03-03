@@ -1,0 +1,50 @@
+:host {
+  display: flex;
+  gap: 12px;
+
+  .user-name-time {
+    display: flex;
+    gap: 8px;
+    justify-content: flex-start;
+  }
+}
+
+:host.is-mine {
+  display: flex;
+  justify-self: end;
+  text-align: right;
+
+  .message-container {
+    order: -1;
+  }
+
+  .user-name-time {
+    justify-content: flex-end;
+  }
+
+  .time {
+    order: 1;
+  }
+
+  .name {
+    order: 2;
+  }
+
+  .message-text {
+    clip-path: polygon(0 0, calc(100% - 10px) 0, 100% 10px, 100% 100%, 0 100%);
+    background: var(--primary-color);
+    color: var(--dark-color);
+  }
+}
+
+.message-text {
+  padding: 8px 16px;
+  background: var(--message-color);
+  font-weight: 500;
+  color: var(--light-color);
+  min-width: 0;
+  width: fit-content;
+  max-width: 100%;
+  word-break: break-word;
+  clip-path: polygon(10px 0, 100% 0, 100% 100%, 0 100%, 0 10px);
+}

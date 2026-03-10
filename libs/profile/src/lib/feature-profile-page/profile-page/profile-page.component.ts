@@ -7,7 +7,6 @@ import { ImgUrlPipe, SvgIconComponent } from "@tt/common-ui";
 import { ProfileService } from '../../data'
 import {ProfileHeaderComponent} from "../../ui";
 import {PostFeedComponent} from "@tt/posts";
-import {ChatsService} from "@tt/chats";
 
 @Component({
   selector: 'app-profile-page',
@@ -25,7 +24,7 @@ import {ChatsService} from "@tt/chats";
 })
 export class ProfilePageComponent {
   profileService = inject(ProfileService);
-  chatsService = inject(ChatsService);
+
   route = inject(ActivatedRoute);
   router = inject(Router);
 

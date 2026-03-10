@@ -9,7 +9,7 @@ import {
 } from '@angular/core';
 import { NgIf } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { PostService } from "../../data";
+
 import {AvatarCircleComponent, SvgIconComponent} from "@tt/common-ui";
 import {GlobalStoreService} from "@tt/shared";
 
@@ -22,7 +22,7 @@ import {GlobalStoreService} from "@tt/shared";
 })
 export class PostInputComponent {
   r2 = inject(Renderer2);
-  postService = inject(PostService);
+
 
   isCommentInput = input(false);
   postId = input<number>(0);

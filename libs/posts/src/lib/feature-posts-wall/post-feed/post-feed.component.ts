@@ -8,7 +8,6 @@ import {
   Renderer2,
 } from '@angular/core';
 import { PostComponent } from '../post/post.component';
-import { ProfileService } from "@tt/profile";
 import { PostInputComponent } from "../../ui";
 import { PostService } from "../../data";
 import {
@@ -17,6 +16,7 @@ import {
   Subject,
   takeUntil,
 } from 'rxjs';
+import {GlobalStoreService} from "@tt/shared";
 
 @Component({
   selector: 'app-post-feed',
@@ -30,7 +30,7 @@ export class PostFeedComponent implements AfterViewInit, OnDestroy {
   hostElement = inject(ElementRef);
   r2 = inject(Renderer2);
 
-  profile = inject(ProfileService).me;
+  profile = inject(GlobalStoreService).me;
   feed = this.postService.posts; // nado?
 
   private destroy$ = new Subject<void>();

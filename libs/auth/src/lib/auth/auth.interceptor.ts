@@ -3,7 +3,6 @@ import {
   HttpInterceptorFn,
   HttpRequest,
 } from '@angular/common/http';
-import { AuthService } from './auth.service';
 import { inject } from '@angular/core';
 import {
   BehaviorSubject,
@@ -13,8 +12,9 @@ import {
   tap,
   throwError,
 } from 'rxjs';
+import {AuthService} from "@tt/data-access";
 
-let isRefreshing$ = new BehaviorSubject<boolean>(false);
+const isRefreshing$ = new BehaviorSubject<boolean>(false);
 
 export const authTokenInterceptor: HttpInterceptorFn = (req, next) => {
   const authService = inject(AuthService);

@@ -1,9 +1,8 @@
 import { Component, inject, input, OnInit, signal } from '@angular/core';
 import { firstValueFrom } from 'rxjs';
 import { CommentComponent, PostInputComponent } from '../../ui'
-import { Post, PostComment, PostService } from "../../data";
 import { AnywhereTimePipe, AvatarCircleComponent, SvgIconComponent } from "@tt/common-ui";
-import {GlobalStoreService} from "@tt/shared";
+import {GlobalStoreService, Post, PostComment, PostService} from "@tt/data-access";
 
 @Component({
   selector: 'app-post',

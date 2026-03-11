@@ -1,8 +1,7 @@
 import { Component, inject } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
-import { ProfileService } from "@tt/profile";
 import {SidebarComponent} from "../sidebar/sidebar.component";
-
+import {ProfileService} from "@tt/data-access";
 
 @Component({
   selector: 'app-layout',

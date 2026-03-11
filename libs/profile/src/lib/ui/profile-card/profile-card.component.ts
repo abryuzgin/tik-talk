@@ -1,6 +1,6 @@
 import { Component, Input } from '@angular/core';
 import {ImgUrlPipe} from "@tt/common-ui";
-import {Profile} from "@tt/interfaces/profile";
+import {Profile} from "@tt/data-access";
 
 @Component({
   selector: 'app-profile-card',
@@ -13,3 +13,5 @@ import {Profile} from "@tt/interfaces/profile";
 export class ProfileCardComponent {
   @Input() profile!: Profile;
 }
+
+

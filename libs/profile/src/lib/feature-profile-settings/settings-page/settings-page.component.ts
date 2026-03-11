@@ -4,7 +4,7 @@ import { firstValueFrom } from 'rxjs';
 import { AsyncPipe } from '@angular/common';
 import { toObservable } from '@angular/core/rxjs-interop';
 import {AvatarUploadComponent, ProfileHeaderComponent} from "../../ui";
-import { ProfileService } from '../../data'
+import {ProfileService} from "@tt/data-access";
 
 @Component({
   selector: 'app-settings-page',

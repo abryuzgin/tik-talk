@@ -17,7 +17,8 @@ import {
   Subject,
   takeUntil,
 } from 'rxjs';
-import {Chat, ChatsService} from "../../../data";
+import {Chat, ChatsService} from "@tt/data-access";
+
 
 @Component({
   selector: 'app-chat-workspace-messages-wrapper',

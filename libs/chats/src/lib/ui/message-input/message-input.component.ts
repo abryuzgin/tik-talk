@@ -7,7 +7,7 @@ import {
 } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { NgIf } from '@angular/common';
-import { ProfileService } from '@tt/profile';
+import {ProfileService} from "@tt/data-access";
 import {AvatarCircleComponent, SvgIconComponent} from "@tt/common-ui";
 
 @Component({

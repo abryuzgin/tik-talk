@@ -9,14 +9,14 @@ import {
 } from '@angular/core';
 import { PostComponent } from '../post/post.component';
 import { PostInputComponent } from "../../ui";
-import { PostService } from "../../data";
 import {
   debounceTime,
   firstValueFrom,
   Subject,
   takeUntil,
 } from 'rxjs';
-import {GlobalStoreService} from "@tt/shared";
+import {GlobalStoreService} from "@tt/data-access";
+import {PostService} from "@tt/data-access";
 
 @Component({
   selector: 'app-post-feed',

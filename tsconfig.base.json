@@ -25,7 +25,7 @@
       "@tt/shared": ["libs/shared/src/index.ts"],
       "@tt/chats": ["libs/chats/src/index.ts"],
       "@tt/layout": ["libs/layout/src/index.ts"],
-      "@tt/interfaces/*": ["libs/interfaces/src/lib/*"]
+      "@tt/data-access": ["libs/data-access/src/index.ts"]
     },
     "baseUrl": ".",
     "rootDir": "."

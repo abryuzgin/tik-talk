@@ -1,6 +1,6 @@
 import { Component, input } from '@angular/core';
 import { AnywhereTimePipe, AvatarCircleComponent, SvgIconComponent } from "@tt/common-ui";
-import { LastMessageRes } from '../../data'
+import {LastMessageRes} from "@tt/data-access";
 
 @Component({
   selector: 'button[chats]',

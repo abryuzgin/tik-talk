@@ -8,17 +8,12 @@ import {
   Renderer2,
   ViewChild,
   OnDestroy,
+  effect
 } from '@angular/core';
 import { ChatWorkspaceMessageComponent } from './chat-workspace-message/chat-workspace-message.component';
 import { MessageInputComponent } from '../../../ui'
-import {
-  debounceTime,
-  firstValueFrom,
-  Subject,
-  takeUntil,
-} from 'rxjs';
+import { debounceTime, firstValueFrom, Subject, takeUntil } from 'rxjs';
 import {Chat, ChatsService} from "@tt/data-access";
-
 
 @Component({
   selector: 'app-chat-workspace-messages-wrapper',
@@ -31,8 +26,10 @@ export class ChatWorkspaceMessagesWrapperComponent
   implements OnDestroy, AfterViewInit
 {
   @ViewChild('chatContainer') chatContainer!: ElementRef;
+
   chatsService = inject(ChatsService);
   groupedMessages = this.chatsService.groupedMessages;
+  messages = this.chatsService.activeChatMessages;
 
   hostElement = inject(ElementRef);
   r2 = inject(Renderer2);
@@ -41,13 +38,17 @@ export class ChatWorkspaceMessagesWrapperComponent
 
   chat = input.required<Chat>();
 
-  messages = this.chatsService.activeChatMessages;
-
   async onSendMessage(messageText: string) {
-    await firstValueFrom(
-      this.chatsService.sendMessage(this.chat().id, messageText),
-    );
+    this.chatsService.wsAdapter.sendMessage(
+      messageText,
+      this.chat().id
+    )
+
+    // await firstValueFrom(
+    //   this.chatsService.sendMessage(this.chat().id, messageText),
+    // );
     await firstValueFrom(this.chatsService.getChatById(this.chat().id));
+
     setTimeout(() => {
       this.scrollDown();
     }, 100);
@@ -72,16 +73,25 @@ export class ChatWorkspaceMessagesWrapperComponent
         this.resizeFeed();
       });
 
+    effect(() => {
+      const currentMessages = this.messages()
+      if (currentMessages.length > 0) {
+        setTimeout(() => {
+          this.scrollDown();
+        }, 100)
+      }
+    })
+  }
     // timer(0, 3000).pipe(
     //   switchMap(() => { // switchMap отменяет предыдущий незавершенный запрос при новом значении (принимает каждое значение из timer и преобразует его в новый Observable)
-    //     // Представьте, что сервер тормозит и отвечает 10 секунд, а таймер тикает каждые 5 секунд. Без switchMap накопится куча одновременных запросов. С switchMap каждый новый запрос отменяет предыдущий.
+    //     // Допустим, что сервер тормозит и отвечает 10 секунд, а таймер тикает каждые 5 секунд. Без switchMap накопится куча одновременных запросов. С switchMap каждый новый запрос отменяет предыдущий.
     //     const currentChatId = this.chat()?.id;
     //     if (!currentChatId) return []; // Проверка безопасности, Если нет активного чата, возвращаем пустой массив
     //     return this.chatsService.getChatById(currentChatId); // Именно этот Observable будет выполнен switchMap
     //   }),
     //   takeUntil(this.destroy$)
     // ).subscribe();
-  }
+
 
   private scrollDown() {
     if (this.chatContainer) {
@@ -107,7 +117,6 @@ export class ChatWorkspaceMessagesWrapperComponent
 
   resizeFeed() {
     const { top } = this.hostElement.nativeElement.getBoundingClientRect(); // getBoundingClientRect - пришлет координаты, где расположен элемент
-
     const height = window.innerHeight - top - 25;
     this.r2.setStyle(this.hostElement.nativeElement, 'height', `${height}px`);
   }

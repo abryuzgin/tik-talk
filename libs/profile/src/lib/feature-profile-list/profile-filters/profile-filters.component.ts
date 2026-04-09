@@ -1,7 +1,8 @@
-import { Component, inject, OnDestroy } from '@angular/core';
+import {Component, inject, OnDestroy, OnInit} from '@angular/core';
 import { FormBuilder, ReactiveFormsModule } from '@angular/forms';
-import { debounceTime, startWith, Subscription, switchMap } from 'rxjs';
-import {ProfileService} from "@tt/data-access";
+import { debounceTime, startWith, Subscription } from 'rxjs';
+import {Store} from "@ngrx/store";
+import {profileActions} from "../../data";
 
 @Component({
   selector: 'app-profile-filters',
@@ -10,9 +11,9 @@ import {ProfileService} from "@tt/data-access";
   templateUrl: './profile-filters.component.html',
   styleUrl: './profile-filters.component.scss',
 })
-export class ProfileFiltersComponent implements OnDestroy {
+export class ProfileFiltersComponent implements OnInit, OnDestroy {
   fb = inject(FormBuilder);
-  profileService = inject(ProfileService);
+  store = inject(Store)
 
   searchForm = this.fb.group({
     firstName: [''],
@@ -21,23 +22,42 @@ export class ProfileFiltersComponent implements OnDestroy {
   });
 
   searchFormSub!: Subscription;
+  searchFilterSub!: Subscription;
 
   constructor() {
     this.searchFormSub = this.searchForm.valueChanges
       .pipe(
         startWith({}),
         debounceTime(300),
-        switchMap((formValue) => {
-          return this.profileService.filterProfiles(formValue);
-        }),
       )
-      .subscribe();
+      .subscribe(formValue => {
+        this.store.dispatch(profileActions.filterEvents({filters: formValue}))
+      });
+  }
+
+  saveFilter(value: any) {
+    localStorage.setItem("saveFilter", JSON.stringify(value))
+  }
+
+  ngOnInit() {
+    const saveData = localStorage.getItem("saveFilter");
+    if (saveData) {
+      this.searchForm.patchValue(JSON.parse(saveData))
+    }
+
+    this.searchFilterSub = this.searchForm.valueChanges.subscribe((value) => {
+      this.saveFilter(value)
+    })
   }
 
   // Убираем "утечку памяти". Когда со страницы поиска уходим на другую страницу, то
   // обработчик еще висит и "слушает", а это не нужно.
-  // Помимо строк ниже есть еще строка 17 (implements OnDestroy) и 27 и 30
   ngOnDestroy() {
-    this.searchFormSub.unsubscribe();
+    if (this.searchFormSub) {
+      this.searchFormSub.unsubscribe()
+    }
+    if (this.searchFilterSub) {
+      this.searchFilterSub.unsubscribe()
+    }
   }
 }

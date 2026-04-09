@@ -1,9 +1,15 @@
-import { inject, Injectable, signal } from '@angular/core';
+import {computed, inject, Injectable, signal} from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Chat, LastMessageRes, Message } from '../interfaces/chats.interface';
 import { ProfileService } from '../../profile';
-import { map } from 'rxjs';
+import {map, Observable} from 'rxjs';
 import { DateTime } from 'luxon';
+import {ChatWSService} from "../interfaces/chat-ws-service.interface";
+import {ChatWSNativeService} from "./chat-ws-native.service";
+import {AuthService} from "../../auth";
+import {ChatWSMessage} from "../interfaces/chat-ws-message.interface";
+import {isNewMessage} from "../interfaces/type-guards";
+import {ChatWsRxjsService} from "../interfaces/chat-ws-rxjs.service";
 
 export interface MessageGroup {
   dateIcon: string;
@@ -15,14 +21,49 @@ export interface MessageGroup {
 })
 export class ChatsService {
   http = inject(HttpClient);
-  me = inject(ProfileService).me;
+  #authService = inject(AuthService);
+  wsAdapter: ChatWSService = new ChatWsRxjsService()
 
+  me = inject(ProfileService).me;
   activeChatMessages = signal<Message[]>([]);
-  groupedMessages = signal<MessageGroup[]>([]);
+  // groupedMessages = signal<MessageGroup[]>([]);
+  groupedMessages = computed(() => {
+    return this.getGroupedMessages(this.activeChatMessages())
+  })
 
   baseApiUrl = 'https://icherniakov.ru/yt-course/';
   chatsUrl = `${this.baseApiUrl}chat/`;
   messageUrl = `${this.baseApiUrl}message/`;
+
+  connectWs() {
+    return this.wsAdapter.connect({
+      url: `${this.baseApiUrl}chat/ws`,
+      token: this.#authService.token ?? '',
+      handleMessage: this.handleWSMessage
+    }) as Observable<ChatWSMessage>;
+  }
+
+  handleWSMessage = (message: ChatWSMessage) => {
+    if (!('action' in message)) return
+
+    if (isNewMessage(message)) {
+       const newMessage: Message = {
+      // this.activeChatMessages.set([
+      //   ...this.activeChatMessages(),
+          id: message.data.id,
+          userFromId: message.data.author,
+          personalChatId: message.data.chat_id,
+          text: message.data.message,
+          createdAt: message.data.created_at,
+          isRead: false,
+          isMine: message.data.author === this.me()?.id,
+        }
+
+       this.activeChatMessages.set([...this.activeChatMessages(), newMessage]);
+
+      // ])
+    }
+  }
 
   createChat(userId: number) {
     return this.http.post<Chat>(`${this.chatsUrl}${userId}`, {});
@@ -47,9 +88,9 @@ export class ChatsService {
           };
         });
 
-        const grouped = this.getGroupedMessages(patchedMessages);
-        this.groupedMessages.set(grouped);
+        // const groupedMessages = this.getGroupedMessages(patchedMessages);
         this.activeChatMessages.set(patchedMessages);
+        // this.groupedMessages.set(groupedMessages);
 
         return {
           ...chat,
@@ -60,6 +101,18 @@ export class ChatsService {
           messages: patchedMessages,
         };
       }),
+    );
+  }
+
+  sendMessage(chatId: number, message: string) {
+    return this.http.post(
+      `${this.messageUrl}send/${chatId}`,
+      {},
+      {
+        params: {
+          message,
+        },
+      },
     );
   }
 
@@ -104,17 +157,5 @@ export class ChatsService {
     } else {
       return messageDate.toFormat('dd.MM.yyyy');
     }
-  }
-
-  sendMessage(chatId: number, message: string) {
-    return this.http.post<Message>(
-      `${this.messageUrl}send/${chatId}`,
-      {},
-      {
-        params: {
-          message,
-        },
-      },
-    );
   }
 }

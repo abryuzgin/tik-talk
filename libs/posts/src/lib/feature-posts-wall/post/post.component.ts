@@ -3,6 +3,8 @@ import { firstValueFrom } from 'rxjs';
 import { CommentComponent, PostInputComponent } from '../../ui'
 import { AnywhereTimePipe, AvatarCircleComponent, SvgIconComponent } from "@tt/common-ui";
 import {GlobalStoreService, Post, PostComment, PostService} from "@tt/data-access";
+import {Store} from "@ngrx/store";
+import {selectFilteredPosts} from "../../data";
 
 @Component({
   selector: 'app-post',
@@ -17,12 +19,16 @@ import {GlobalStoreService, Post, PostComment, PostService} from "@tt/data-acces
   templateUrl: './post.component.html',
   styleUrl: './post.component.scss',
 })
+
 export class PostComponent implements OnInit {
   post = input<Post>();
   profile = inject(GlobalStoreService).me;
   comments = signal<PostComment[]>([]);
-
   postService = inject(PostService);
+  store = inject(Store)
+
+  feed = this.store.selectSignal(selectFilteredPosts)
+  // cooments = this.store.selectSignal(selectFilteredComments)
 
   async ngOnInit() {
     this.comments.set(this.post()!.comments);

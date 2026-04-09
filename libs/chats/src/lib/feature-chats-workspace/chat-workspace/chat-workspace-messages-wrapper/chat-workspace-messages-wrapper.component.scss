@@ -2,7 +2,6 @@
   display: grid;
   padding: 16px 20px;
   grid-template-rows: 1fr min-content;
-  height: 650px;
 }
 
 .messages-wrapper {
@@ -18,7 +17,8 @@
 .date-splitter {
   display: flex;
   justify-content: center;
-  margin: 32px 0;
+  align-items: center;
+  margin: 16px 0;
 }
 
 .date-icon {

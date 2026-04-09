@@ -16,6 +16,7 @@ export class AuthService {
 
   token: string | null = null;
   refreshToken: string | null = null;
+
   // Метод, который говорит авторизован пользователь или нет
   get isAuth() {
     if (!this.token) {

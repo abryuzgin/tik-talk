@@ -1,4 +1,4 @@
-import { Component, inject } from '@angular/core';
+import {Component, inject, OnInit} from '@angular/core';
 import { RouterOutlet } from '@angular/router';
 import {SidebarComponent} from "../sidebar/sidebar.component";
 import {ProfileService} from "@tt/data-access";
@@ -11,7 +11,7 @@ import {ProfileService} from "@tt/data-access";
   styleUrl: './layout.component.scss',
 })
 export class LayoutComponent {
-  profileService = inject(ProfileService)
+  // profileService = inject(ProfileService)
 
   // // Получаем информацию о залогиненном юзере (т.е. обо мне)
   // ngOnInit() {

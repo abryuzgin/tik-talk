@@ -1,4 +1,4 @@
-import { Component, inject } from '@angular/core';
+import {Component, inject, OnInit} from '@angular/core';
 import { AsyncPipe, NgForOf } from '@angular/common';
 import { SubscriberCardComponent } from './subscriber-card/subscriber-card.component';
 import { RouterLink, RouterLinkActive } from '@angular/router';
@@ -21,10 +21,9 @@ import {ProfileService} from "@tt/data-access";
   styleUrl: './sidebar.component.scss',
   templateUrl: './sidebar.component.html',
 })
-export class SidebarComponent {
+export class SidebarComponent implements OnInit {
   // Получаем профиль сервис для наших подписчиков
   profileService = inject(ProfileService);
-
   subscribers$ = this.profileService.getSubscribersShortList();
 
   // Информация о нас

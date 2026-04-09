@@ -17,6 +17,8 @@ import {
 } from 'rxjs';
 import {GlobalStoreService} from "@tt/data-access";
 import {PostService} from "@tt/data-access";
+import {Store} from "@ngrx/store";
+import {postActions} from "../../data";
 
 @Component({
   selector: 'app-post-feed',
@@ -29,9 +31,10 @@ export class PostFeedComponent implements AfterViewInit, OnDestroy {
   postService = inject(PostService);
   hostElement = inject(ElementRef);
   r2 = inject(Renderer2);
+  store = inject(Store)
 
   profile = inject(GlobalStoreService).me;
-  feed = this.postService.posts; // nado?
+  feed = this.postService.posts
 
   private destroy$ = new Subject<void>();
   private resize$ = new Subject<void>();
@@ -76,6 +79,14 @@ export class PostFeedComponent implements AfterViewInit, OnDestroy {
 
   onCreatePost(postText: string) {
     if (!postText) return;
+
+    this.store.dispatch(postActions.createPosts({
+      payload: {
+        title: 'Клевый пост',
+        content: postText,
+        authorId: this.profile()!.id,
+      }
+    }))
 
     firstValueFrom(
       this.postService.createPost({

@@ -1,5 +1,5 @@
 import { ChatWorkspaceComponent } from "../chat-workspace/chat-workspace.component";
-import { ChatsPageComponent } from './chats.component';
+import { ChatsPageComponent } from '../index';
 import { Route } from '@angular/router';
 
 

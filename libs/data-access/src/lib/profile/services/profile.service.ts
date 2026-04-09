@@ -9,16 +9,15 @@ import { Profile } from "../interfaces/profile.interface";
 })
 export class ProfileService {
   http = inject(HttpClient);
-  #globalStoreService = inject(GlobalStoreService);
   baseApiUrl = 'https://icherniakov.ru/yt-course/';
+  #globalStoreService = inject(GlobalStoreService);
 
   me = signal<Profile | null>(null);
-  filteredProfiles = signal<Profile[]>([]);
 
-  // Запрос на получение запроса
-  getTestAccounts() {
-    return this.http.get<Profile[]>(`${this.baseApiUrl}account/test_accounts`);
-  }
+  // // Запрос на получение запроса
+  // getTestAccounts() {
+  //   return this.http.get<Profile[]>(`${this.baseApiUrl}account/test_accounts`);
+  // }
 
   // Получаем себя
   getMe() {
@@ -61,6 +60,5 @@ export class ProfileService {
       .get<Pageble<Profile>>(`${this.baseApiUrl}account/accounts`, {
         params,
       })
-      .pipe(tap((res) => this.filteredProfiles.set(res.items)));
   }
 }

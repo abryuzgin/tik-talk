@@ -1,3 +1,4 @@
+
 import {
   Component,
   AfterViewInit,
@@ -39,34 +40,15 @@ export class ChatWorkspaceMessagesWrapperComponent
   chat = input.required<Chat>();
 
   async onSendMessage(messageText: string) {
-    this.chatsService.wsAdapter.sendMessage(
-      messageText,
-      this.chat().id
-    )
+    this.chatsService.wsAdapter.sendMessage(messageText, this.chat().id)
 
     // await firstValueFrom(
     //   this.chatsService.sendMessage(this.chat().id, messageText),
     // );
     await firstValueFrom(this.chatsService.getChatById(this.chat().id));
-
-    setTimeout(() => {
-      this.scrollDown();
-    }, 100);
   }
 
   constructor() {
-    // effect((onCleanup) => {
-    //   this.groupedMessages()
-    //   // отписка от setTimeout (если компонент уничтожится до выполнения setTimeout нужно отписаться от setTimeout, чтобы не было ошибки. Т.е. отправил сообщение и через 50мс нажал на другую страницу, setTimeout продолжает работать (100мс), но ты уже в другом месте. Будет ошибка
-    //   const timeout = setTimeout(() => {
-    //   this.scrollDown()
-    //   }, 100)
-    //
-    //   onCleanup(() => {
-    //     clearTimeout(timeout)
-    //   })
-    // })
-
     this.resize$
       .pipe(debounceTime(300), takeUntil(this.destroy$))
       .subscribe(() => {
@@ -76,22 +58,16 @@ export class ChatWorkspaceMessagesWrapperComponent
     effect(() => {
       const currentMessages = this.messages()
       if (currentMessages.length > 0) {
+
+        const updatedGroups = this.chatsService.getGroupedMessages(currentMessages);
+        this.groupedMessages.set(updatedGroups);
+
         setTimeout(() => {
           this.scrollDown();
         }, 100)
       }
     })
   }
-    // timer(0, 3000).pipe(
-    //   switchMap(() => { // switchMap отменяет предыдущий незавершенный запрос при новом значении (принимает каждое значение из timer и преобразует его в новый Observable)
-    //     // Допустим, что сервер тормозит и отвечает 10 секунд, а таймер тикает каждые 5 секунд. Без switchMap накопится куча одновременных запросов. С switchMap каждый новый запрос отменяет предыдущий.
-    //     const currentChatId = this.chat()?.id;
-    //     if (!currentChatId) return []; // Проверка безопасности, Если нет активного чата, возвращаем пустой массив
-    //     return this.chatsService.getChatById(currentChatId); // Именно этот Observable будет выполнен switchMap
-    //   }),
-    //   takeUntil(this.destroy$)
-    // ).subscribe();
-
 
   private scrollDown() {
     if (this.chatContainer) {

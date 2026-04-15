@@ -18,7 +18,7 @@ export class ChatWSNativeService implements ChatWSService {
     }
   }
 
-  sendMessage(text: string, chatId: number) {
+  sendMessage(text: string, chatId: number): void {
     this.#socket?.send(
       JSON.stringify({
         text,

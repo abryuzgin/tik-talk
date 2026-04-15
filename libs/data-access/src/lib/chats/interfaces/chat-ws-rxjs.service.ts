@@ -25,11 +25,10 @@ export class ChatWsRxjsService implements ChatWSService {
     this.#socket?.complete()
   }
 
-  sendMessage(text: string, chatId: number): void {
+    sendMessage(text: string, chatId: number): void {
     this.#socket?.next({
       text,
       chat_id: chatId,
     })
   }
-
 }

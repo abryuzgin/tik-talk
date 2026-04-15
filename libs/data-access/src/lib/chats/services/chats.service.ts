@@ -1,4 +1,4 @@
-import {computed, inject, Injectable, signal} from '@angular/core';
+import {inject, Injectable, signal} from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Chat, LastMessageRes, Message } from '../interfaces/chats.interface';
 import { ProfileService } from '../../profile';
@@ -26,10 +26,7 @@ export class ChatsService {
 
   me = inject(ProfileService).me;
   activeChatMessages = signal<Message[]>([]);
-  // groupedMessages = signal<MessageGroup[]>([]);
-  groupedMessages = computed(() => {
-    return this.getGroupedMessages(this.activeChatMessages())
-  })
+  groupedMessages = signal<MessageGroup[]>([]);
 
   baseApiUrl = 'https://icherniakov.ru/yt-course/';
   chatsUrl = `${this.baseApiUrl}chat/`;
@@ -47,21 +44,23 @@ export class ChatsService {
     if (!('action' in message)) return
 
     if (isNewMessage(message)) {
-       const newMessage: Message = {
-      // this.activeChatMessages.set([
-      //   ...this.activeChatMessages(),
-          id: message.data.id,
-          userFromId: message.data.author,
-          personalChatId: message.data.chat_id,
-          text: message.data.message,
-          createdAt: message.data.created_at,
-          isRead: false,
-          isMine: message.data.author === this.me()?.id,
-        }
+      // const newMessage: Message = {
+        this.activeChatMessages.set([
+          ...this.activeChatMessages(),
+       {
+        id: message.data.id,
+        userFromId: message.data.author,
+        personalChatId: message.data.chat_id,
+        text: message.data.message,
+        createdAt: message.data.created_at,
+        isRead: false,
+        isMine: message.data.author === this.me()?.id,
+       }
 
-       this.activeChatMessages.set([...this.activeChatMessages(), newMessage]);
-
-      // ])
+      // const updatedMessages = [...this.activeChatMessages(), newMessage];
+      // this.activeChatMessages.set(updatedMessages);
+      // this.groupedMessages.set(this.getGroupedMessages(updatedMessages))
+      ])
     }
   }
 
@@ -88,9 +87,13 @@ export class ChatsService {
           };
         });
 
-        // const groupedMessages = this.getGroupedMessages(patchedMessages);
+        const grouped = this.getGroupedMessages(patchedMessages);
+        this.groupedMessages.set(grouped);
         this.activeChatMessages.set(patchedMessages);
-        // this.groupedMessages.set(groupedMessages);
+
+        // // const groupedMessages = this.getGroupedMessages(patchedMessages);
+        // this.activeChatMessages.set(patchedMessages);
+        // this.groupedMessages.set(this.getGroupedMessages(patchedMessages));
 
         return {
           ...chat,
@@ -105,7 +108,7 @@ export class ChatsService {
   }
 
   sendMessage(chatId: number, message: string) {
-    return this.http.post(
+    return this.http.post<Message>(
       `${this.messageUrl}send/${chatId}`,
       {},
       {
@@ -130,11 +133,13 @@ export class ChatsService {
       const messageDate = DateTime.fromISO(message.createdAt, {
         zone: 'utc',
       }).setZone('local');
+
+
       const dateKey = messageDate.toFormat('yyyy-MM-dd');
 
-      if (dateKey !== currentDate) {
+      if (dateKey !== currentDate) { // Проверяем, изменилась ли дата относительно предыдущего сообщения
         currentDate = dateKey;
-        const dateIcon = this.getDateIcon(messageDate);
+        const dateIcon = this.getDateIcon(messageDate) // Получаем иконку даты
         groups.push({
           dateIcon: dateIcon,
           messages: [],
